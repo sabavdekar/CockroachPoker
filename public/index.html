@@ -1,48 +1,70 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Socket.IO chat</title>
-    <style>
-      body { margin: 0; padding-bottom: 3rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cockroach Poker</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css"> <!-- Add your custom stylesheets -->
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Welcome to Cockroach Poker!</h1>
+      <p class="subtitle">A fun and exciting bluffing card game for all ages.</p>
+    </div>
+  </header>
 
-      #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
-      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
-      #input:focus { outline: none; }
-      #form > button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+  <main>
+    <section class="hero">
+      <div class="container">
+        <h2>How to Play</h2>
+        <p align="left"> On a turn, a player takes one card from his hand, lays it face down on the table, slides it to a player of his choice, and declares a type of critter, e.g., “Stink bug”. The player receiving the card either: <br>
 
-      #messages { list-style-type: none; margin: 0; padding: 0; }
-      #messages > li { padding: 0.5rem 1rem; }
-      #messages > li:nth-child(odd) { background: #efefef; }
-    </style>
-  </head>
-  <body>
-    <ul id="messages"></ul>
-    <form id="form" action="">
-      <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
+        <p align="left"> Accepts the card, says either “true” or “false”, then reveals the card. If this player is wrong in her claim, she keeps the card on the table in front of her face up; if she is right, the player who gave her the card places it face up before him. <br>
+          
+        <p align="left"> Or passes the card to another player, peeking at it first, then keeping it face-down and either saying the original type of critter or saying a new type. This new player again has the choice of accepting the card or passing it, unless the card has already been seen by all other players in which case the player must accept it and make a true/false claim. <br>
+          
+        <p align="left"> The game ends when a player has no cards to pass on his turn or when a player has four cards of the same critter on the table in front of him. In either case, this player loses and everyone else wins.</p>
+      </div>
+    </section>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-      var socket = io();
-    
-      var messages = document.getElementById('messages');
-      var form = document.getElementById('form');
-      var input = document.getElementById('input');
-    
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (input.value) {
-          socket.emit('chat message', input.value);
-          input.value = '';
-        }
-      });
-    
-      socket.on('chat message', function(msg) {
-        var item = document.createElement('li');
-        item.textContent = msg;
-        messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
-      });
-    </script>
-  </body>
+    <section class="cta">
+      <div class="container">
+        <h2>Join or Create a Room</h2>
+        <p>Start playing Cockroach Poker now!</p>
+        <div class="row">
+          <div class="col-md-6">
+            <!-- <div class="form-group">
+              <label for="username">Username</label>
+              <input type="text" class="form-control" id="username" placeholder="Enter your username">
+            </div> -->
+            <form action="/CreateRoomButton" method="GET">
+              <button id="CreateRoom"  class="btn btn-primary">Create Room</button>
+            </form>
+
+            </div>
+          <div class="col-md-6">
+            <!-- <div class="form-group">
+              <label for="roomCode">Room Code</label>
+              <input type="text" class="form-control" id="roomCode" placeholder="Enter room code">
+            </div> -->
+            <form action="/JoinRoomButton" method="GET">
+              <button id="JoinRoom"  class="btn btn-primary">Join Room With Code</button>
+            </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+  <script>
+
+
+  </script>
+</body>
 </html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cockroach Poker - Create Room</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Create Room</h1>
+    </div>
+  </header>
+
+  <main>
+    <section class="container">
+      <div class="form-group">
+        <label for="username">Enter Your Username:</label>
+        <input type="text" class="form-control" id="username" placeholder="Username">
+      </div>
+      <div class="buttons">
+        <form action="/CreateLobby" method="GET">
+          <button class="btn btn-primary" onclick="btnevent()" id="CreateLobby">Create Room</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+      var socket = io();
+
+      function generateRandomString() {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        
+        for (let i = 0; i < 5; i++) {
+          const randomIndex = Math.floor(Math.random() * characters.length);
+          result += characters.charAt(randomIndex);
+        }
+        
+        return result;
+      }
+
+
+      function btnevent(){
+
+        roomCode = generateRandomString();
+
+        var input = document.getElementById('username');
+        socket.emit('UsernameInput', input.value);
+        localStorage.setItem('roomCode', roomCode);
+        
+      }
+
+  </script>
+</body>
+</html>

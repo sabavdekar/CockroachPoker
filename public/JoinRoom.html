@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cockroach Poker - Create Room</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Join Room</h1>
+    </div>
+  </header>
+
+  <main>
+    <section class="container">
+      <div class="form-group">
+        <label for="username">Enter Your Username:</label>
+        <input type="text" class="form-control" id="username" placeholder="Username">
+        <br>  
+        <label for="username">Enter The Room ID:</label>
+        <input type="text" class="form-control" id="RoomID" placeholder="Room ID">
+      </div>
+      <div class="buttons">
+        <form action="/JoinLobby" method="GET">
+          <button class="btn btn-primary" onclick="btnevent()" id="JoinLobby">Join Room</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+      var socket = io();
+
+      function btnevent(){
+
+        var username = document.getElementById('username');
+        var ID = document.getElementById('RoomID');
+
+        localStorage.setItem('Username', username.value);
+        localStorage.setItem('roomCode', RoomID.value);
+
+      }
+
+
+  </script>
+</body>
+</html>
