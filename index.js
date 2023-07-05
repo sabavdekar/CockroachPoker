@@ -6,15 +6,59 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 const { MongoClient } = require('mongodb');
 
-
+// Connection URI
 const uri = 'mongodb+srv://cockroach-poker-main-db-06755504ad4:gbDZ1t6hQKAnye7HZJzBV4pd7ysGTR@prod-us-central1-2.ih9la.mongodb.net/cockroach-poker-main-db-06755504ad4';
+
+// Create a new MongoClient
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Function to create a document in MongoDB
+async function createRoomDocument(roomId, username) {
+  try {
+    await client.connect(); // Connect to the MongoDB server
+    const db = client.db(); // Get the default database from the client
+
+    // Insert the document into the "rooms" collection
+    await db.collection('rooms').insertOne({
+      roomId: roomId,
+      username: username
+    });
+
+    console.log('Room document created successfully');
+  } catch (error) {
+    console.error('Error creating room document:', error);
+  } finally {
+    await client.close(); // Close the connection
+  }
+}
+
+// Function to retrieve the list of usernames from MongoDB
+async function getUsernames(roomId) {
+  try {
+    await client.connect(); // Connect to the MongoDB server
+    const db = client.db(dbName);
+    const collection = db.collection('rooms');
+
+    // Find the document for the specific room
+    const room = await collection.findOne({ roomId: roomId });
+
+    client.close();
+
+    if (room) {
+      return room.usernames;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error('Error retrieving player list:', error);
+    return [];
+  }
+}
 
 
 const port = process.env.PORT || 3000;
 
 app.use(express.static('public'));
-
 
 app.get('/CreateRoomButton', (req, res) => {
   res.redirect('/CreateRoom.html');
@@ -38,38 +82,6 @@ app.get('/StartGame', (req, res) => {
   res.redirect('/CreateRoom.html');
 });
 
-// app.get('/', (req, res) => {
-//     res.sendFile(__dirname + '/indexbk.html');
-//   });
-function parseCSV(csvList) {
-  // Split the CSV list into an array of values
-  const values = csvList.split(',');
-
-  // Trim leading/trailing spaces from each value
-  const trimmedValues = values.map((value) => value.trim());
-
-  return trimmedValues;
-}
-
-async function addFieldsToDocument(documentId, fieldsToAdd, RoomID) {
-  try {
-    await client.connect();
-    const collection = client.db().collection(RoomID);
-  
-    // Update the document using the $set operator to add fields
-    const result = await collection.updateOne(
-      { _id: documentId },
-      { $set: fieldsToAdd }
-    );
-  
-    console.log('Fields added to document:', result.modifiedCount);
-  } catch (err) {
-    console.error('Error adding fields to document:', err);
-  } finally {
-    client.close();
-  }
-}
-
 io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('disconnect', () => {
@@ -82,62 +94,18 @@ io.on('connection', (socket) => {
         io.emit('chat message', msg);
       });
 
-    socket.on('UsernameInput', (msg) => {
-      data = parseCSV(msg);
-      console.log(data);
-      // // Connect to the MongoDB server
-      // client.connect((err) => {
-      //   if (err) {
-      //     console.error('Error connecting to MongoDB:', err);
-      //     return;
-      //   }
-      //   const collection = client.db().collection(array[1]);
-
-      //   const document = {
-      //     username: data[0],
-      //   };
-
-      //   collection.insertOne(document, (err, result) => {
-      //     if (err) {
-      //       console.error('Error inserting document:', err);
-      //       return;
-      //     }
-
-      //     console.log('Document inserted successfully');
-      //     // Additional logic after document insertion
-      //   });
-      // });
-      // client.close();
-    });
-
     // Handle joining a room
-    socket.on('join', (room) => {
+    socket.on('join', (room, username) => {
       socket.join(room);
-      // Connect to the MongoDB server
-      client.connect((err) => {
-        if (err) {
-          console.error('Error connecting to MongoDB:', err);
-          return;
-        }
-        const collection = client.db().collection(`${room}`);
-        
-        const document = {
-          name: 'John Doe',
-          age: 30,
-          email: 'john@example.com'
-        };
-
-        collection.insertOne(document, (err, result) => {
-          if (err) {
-            console.error('Error inserting document:', err);
-            return;
-          }
-
-          console.log('Document inserted successfully');
-          // Additional logic after document insertion
-        });
+      createRoomDocument(room, username);
+      getUsernames(room)
+      .then((usernames) => {
+        socket.emit('updatePlayerList', usernames);
+      })
+      .catch((error) => {
+        console.error('Error getting usernames:', error);
+        socket.emit('updatePlayerList', []);
       });
-      client.close();
       console.log(`Client joined room: ${room}`);
     });
 

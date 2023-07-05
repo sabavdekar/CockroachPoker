@@ -36,9 +36,12 @@
       <div class="room-info">
         <p>Room Code: <span id="roomCode"></span></p>
       </div>
-      <div class="users-count">
-        <p>Users Connected: <span id="usersCount"></span></p>
-      </div>
+        <div class="users-count">
+          <p>Users Connected: <span id="usersCount"></span></p>
+        </div>
+        <div class="player-list">
+          <ul id="playerList"></ul>
+        </div>
       <div class="start-button">
         <button id="startBtn" class="btn btn-primary">Start Game</button>
       </div>
@@ -52,13 +55,30 @@
   <script>
       var socket = io();
 
-      socket.emit('UsernameInput', localStorage.getItem('Username')+ "," + localStorage.getItem('roomCode'));
-      socket.emit('join', localStorage.getItem('roomCode'))
+      // Function to update the list of players in the HTML page
+      function updatePlayerList(playerList) {
+        const $playerList = $('#playerList');
+        $playerList.empty(); // Clear the existing list
+
+        // Update the list of players in the HTML page
+        playerList.forEach((player) => {
+          $playerList.append('<li>' + player + '</li>');
+        });
+      }
+
+      // Function to handle the 'playerJoined' event
+      socket.on('playerJoined', (data) => {
+        // Update the list of players in the HTML page
+        const $playerList = $('#playerList');
+        $playerList.append('<li>' + data.username + '</li>');
+      });
+
+      // Function to handle the 'updatePlayerList' event
+      socket.on('updatePlayerList', (playerList) => {
+        updatePlayerList(playerList);
+      });
 
       function btnevent(){
-
-        var input = document.getElementById('username');
-        socket.emit('UsernameInput', input.value);
 
       }
 

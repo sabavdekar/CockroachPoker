@@ -41,11 +41,9 @@
         var username = document.getElementById('username');
         var ID = document.getElementById('RoomID');
 
-        localStorage.setItem('Username', username.value);
-        localStorage.setItem('roomCode', RoomID.value);
+        socket.emit('join', ID, username);
 
       }
-
 
   </script>
 </body>

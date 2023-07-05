@@ -9,6 +9,21 @@ header {
     text-align: center;
   }
   
+  /* CSS to style the player list */
+.player-list {
+  margin-top: 20px;
+}
+
+.player-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.player-list li {
+  margin-bottom: 5px;
+  font-size: 16px;
+}
+
   /* Main */
   main {
     padding: 40px 0;

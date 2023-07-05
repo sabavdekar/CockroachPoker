@@ -51,8 +51,8 @@
         roomCode = generateRandomString();
 
         var input = document.getElementById('username');
-        socket.emit('UsernameInput', input.value);
-        localStorage.setItem('roomCode', roomCode);
+        // socket.emit('UsernameInput', input.value);
+        socket.emit('join', roomCode, input.value);
         
       }
 
